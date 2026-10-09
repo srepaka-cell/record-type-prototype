@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>New Record Type · Box Admin</title>
+  <style>
+    :root {
+      --sidebar: #222222;
+      --ink: #222222;
+      --muted: #6f6f6f;
+      --line: #e4e4e4;
+      --input: #cfcfcf;
+      --blue: #0061d5;
+      --save: #8ebfed;
+      --danger: #d32f2f;
+      --pill: #f3f3f3;
+      --bg: #ffffff;
+      --sidebar-text: rgba(255, 255, 255, 0.88);
+      --sidebar-dim: rgba(255, 255, 255, 0.62);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    button, input, textarea, select { font-family: inherit; font-size: 14px; }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 232px;
+      flex: none;
+      background: var(--sidebar);
+      color: var(--sidebar-text);
+      display: flex;
+      flex-direction: column;
+      padding: 16px 12px 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 8px 18px;
+    }
+
+    .wordmark {
+      font-weight: 800;
+      font-size: 26px;
+      letter-spacing: -0.8px;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .admin-badge {
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 3px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      padding: 2px 4px;
+      color: #fff;
+    }
+
+    .brand-icon {
+      margin-left: auto;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 8px;
+      color: var(--sidebar-text);
+      text-decoration: none;
+      font-size: 13.5px;
+    }
+
+    .nav a svg { flex: none; opacity: 0.9; }
+
+    .nav a.active {
+      background: #111;
+      color: #fff;
+    }
+
+    .nav a:hover:not(.active) { background: rgba(255, 255, 255, 0.06); }
+
+    .sidebar-foot {
+      margin-top: auto;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      padding-top: 8px;
+    }
+
+    .sidebar-foot a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 34px;
+      padding: 0 12px;
+      color: var(--sidebar-dim);
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    .main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 20px 0 24px;
+      position: relative;
+    }
+
+    .search {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(460px, 42vw);
+      height: 36px;
+      border: 1px solid #e6e6e6;
+      background: #f7f7f7;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 14px;
+      color: #9a9a9a;
+    }
+
+    .search input {
+      border: 0;
+      background: transparent;
+      outline: none;
+      width: 100%;
+      color: var(--ink);
+    }
+
+    .top-icons {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #4a4a4a;
+    }
+
+    .top-icons button {
+      border: 0;
+      background: transparent;
+      padding: 0;
+      color: inherit;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+    }
+
+    .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(160deg, #d7c4b0, #8d6b58);
+      border: 1px solid #e5e5e5;
+    }
+
+    .page-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 24px 16px 28px;
+    }
+
+    .crumb {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 500;
+      color: #4a4a4a;
+    }
+
+    .crumb span { color: #8a8a8a; font-weight: 400; }
+
+    .page-actions { display: flex; gap: 8px; }
+
+    .btn {
+      height: 32px;
+      padding: 0 16px;
+      border-radius: 16px;
+      border: 1px solid #d5d5d5;
+      background: #fff;
+      color: #222;
+      cursor: pointer;
+    }
+
+    .btn-save {
+      background: var(--save);
+      border-color: transparent;
+      color: #fff;
+      min-width: 72px;
+    }
+
+    .btn:hover { filter: brightness(0.97); }
+
+    .body {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 8px;
+      padding: 0 24px 40px 16px;
+      align-items: start;
+    }
+
+    .steps {
+      position: sticky;
+      top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px;
+    }
+
+    .steps a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 36px;
+      padding: 8px 12px;
+      border-radius: 18px;
+      color: #3a3a3a;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .steps a.active { background: #f2f2f2; }
+
+    .steps a:hover:not(.active) { background: #fafafa; }
+
+    .steps svg { color: #5c5c5c; flex: none; }
+
+    .cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px 22px 22px;
+      background: #fff;
+      scroll-margin-top: 16px;
+    }
+
+    .card h2 {
+      margin: 0 0 4px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .card .lede {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .field { margin-bottom: 14px; }
+    .field:last-child { margin-bottom: 0; }
+
+    .field label, .switch-copy strong, .radio-row span {
+      display: block;
+    }
+
+    .field > label {
+      font-weight: 650;
+      font-size: 13.5px;
+      margin-bottom: 6px;
+    }
+
+    .req { color: var(--danger); margin-right: 2px; }
+
+    input[type="text"], textarea, select.duration {
+      width: 100%;
+      border: 1px solid var(--input);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      padding: 8px 12px;
+      outline: none;
+    }
+
+    input[type="text"] { height: 38px; }
+
+    textarea {
+      min-height: 72px;
+      resize: vertical;
+      line-height: 1.4;
+    }
+
+    input::placeholder, textarea::placeholder { color: #a3a3a3; }
+
+    input:focus, textarea:focus, select.duration:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 1px var(--blue);
+    }
+
+    .hint {
+      margin: 6px 0 0;
+      color: #8a8a8a;
+      font-size: 12px;
+    }
+
+    .switch {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin: 0 0 14px;
+      cursor: pointer;
+    }
+
+    .switch input { position: absolute; opacity: 0; pointer-events: none; }
+
+    .track {
+      width: 36px;
+      height: 20px;
+      border-radius: 10px;
+      background: #d5d5d5;
+      position: relative;
+      flex: none;
+      margin-top: 2px;
+      transition: background 0.15s ease;
+    }
+
+    .track::after {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.15s ease;
+    }
+
+    .switch input:checked + .track { background: var(--blue); }
+    .switch input:checked + .track::after { transform: translateX(16px); }
+    .switch input:focus-visible + .track { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+    .switch-copy strong { font-size: 14px; font-weight: 650; }
+    .switch-copy small { display: block; color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+
+    .radio-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 0 0 10px;
+      cursor: pointer;
+      color: #222;
+      font-size: 14px;
+    }
+
+    .radio-row input {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      margin: 2px 0 0;
+      border: 1.5px solid #b5b5b5;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex: none;
+      background: #fff;
+    }
+
+    .radio-row input:checked {
+      border-color: var(--blue);
+      background: radial-gradient(circle, var(--blue) 0 5px, #fff 5.5px);
+    }
+
+    .radio-row input:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+    .create-policy {
+      display: none;
+      margin-top: 8px;
+      padding-top: 4px;
+    }
+
+    .create-policy.is-open { display: block; }
+
+    .policy-row {
+      display: grid;
+      grid-template-columns: minmax(200px, 280px) minmax(0, 1fr);
+      gap: 28px 40px;
+      padding: 22px 4px 8px;
+    }
+
+    .policy-row + .policy-row {
+      border-top: 1px solid #ececec;
+      margin-top: 16px;
+      padding-top: 26px;
+    }
+
+    .policy-copy h3 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .policy-copy p {
+      margin: 0;
+      color: #6b6b6b;
+      font-size: 13px;
+      line-height: 1.45;
+      max-width: 240px;
+    }
+
+    .policy-fields > .field > label {
+      display: block;
+      font-size: 13.5px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .policy-fields h4 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .policy-fields .field { margin-bottom: 16px; }
+    .policy-fields .field:last-child { margin-bottom: 8px; }
+
+    .radio-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .radio-line .radio-row { margin: 0; }
+
+    .info {
+      width: 14px;
+      height: 14px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      font-style: italic;
+      font-family: Georgia, serif;
+      line-height: 14px;
+      padding: 0;
+      cursor: pointer;
+      flex: none;
+    }
+
+    .nested {
+      margin: -2px 0 12px 26px;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 0 0 10px;
+      cursor: pointer;
+      font-weight: 400;
+      font-size: 14px;
+      color: #222;
+    }
+
+    .check-row input {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      margin: 1px 0 0;
+      border: 1.5px solid #b5b5b5;
+      border-radius: 3px;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      flex: none;
+    }
+
+    .check-row input:checked {
+      background: var(--blue);
+      border-color: var(--blue);
+    }
+
+    .check-row input:checked::after {
+      content: "";
+      width: 8px;
+      height: 4px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: translateY(-1px) rotate(-45deg);
+    }
+
+    .check-row input:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+    .extend-length { margin-left: 24px; }
+
+    .extend-length label {
+      display: block;
+      margin-bottom: 6px;
+      color: #6b6b6b;
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    select.duration {
+      width: 168px;
+      height: 36px;
+      padding-right: 32px;
+      appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23666' stroke-width='1.4' stroke-linecap='round'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      cursor: pointer;
+    }
+
+    select.duration:disabled {
+      color: #9a9a9a;
+      background-color: #f6f6f6;
+      border-color: #e4e4e4;
+      cursor: not-allowed;
+    }
+
+    .specific-date {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 2px 0 4px 26px;
+    }
+
+    .specific-date[hidden],
+    .selected-attr[hidden],
+    .meta-children[hidden],
+    .meta-row[hidden],
+    .meta-group[hidden] {
+      display: none;
+    }
+
+    .selected-attr {
+      color: #222;
+      font-size: 13.5px;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(34, 34, 34, 0.45);
+      display: grid;
+      place-items: center;
+      z-index: 20;
+      padding: 24px;
+    }
+
+    .modal-backdrop[hidden] { display: none; }
+
+    .modal {
+      width: min(760px, 100%);
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+      display: flex;
+      flex-direction: column;
+      max-height: min(640px, calc(100vh - 48px));
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px 8px;
+    }
+
+    .modal-head h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-close {
+      border: 0;
+      background: transparent;
+      font-size: 22px;
+      line-height: 1;
+      color: #444;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .modal-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 8px 20px 14px;
+    }
+
+    .filter {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 36px;
+      border: 1px solid #d5d5d5;
+      border-radius: 6px;
+      padding: 0 10px;
+      color: #8a8a8a;
+      max-width: 420px;
+    }
+
+    .filter input {
+      border: 0;
+      outline: none;
+      width: 100%;
+      background: transparent;
+      color: var(--ink);
+    }
+
+    .meta-help {
+      color: var(--blue);
+      font-size: 14px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .meta-help:hover { text-decoration: underline; }
+
+    .meta-list {
+      overflow: auto;
+      padding: 4px 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 52px;
+      margin: 0;
+      padding: 12px 16px;
+      border: 1px solid #e3e3e3;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 400;
+    }
+
+    .meta-row input {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      border: 1.5px solid #b5b5b5;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex: none;
+      background: #fff;
+    }
+
+    .meta-row input:checked {
+      border-color: var(--blue);
+      background: radial-gradient(circle, var(--blue) 0 5px, #fff 5.5px);
+    }
+
+    .meta-row input:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+    .meta-group { display: flex; flex-direction: column; gap: 8px; }
+
+    .meta-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 0;
+      background: transparent;
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 650;
+      padding: 6px 4px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .meta-toggle .chevron {
+      display: inline-block;
+      transform: rotate(90deg);
+      transition: transform 0.15s ease;
+    }
+
+    .meta-toggle[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+
+    .meta-children {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-left: 22px;
+    }
+
+    .modal-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px 16px;
+      border-top: 1px solid #eee;
+    }
+
+    .modal-foot .page-actions { display: flex; gap: 8px; }
+
+    #meta-count { color: #222; font-size: 14px; }
+
+    #meta-select:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .body { grid-template-columns: 1fr; }
+      .steps { position: static; flex-direction: row; overflow: auto; }
+      .policy-row { grid-template-columns: 1fr; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="wordmark">box</span>
+        <span class="admin-badge">ADMIN</span>
+        <svg class="brand-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <rect x="1.5" y="1.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/>
+          <rect x="9.5" y="1.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/>
+          <rect x="1.5" y="9.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/>
+          <rect x="9.5" y="9.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/>
+        </svg>
+      </div>
+      <nav class="nav" aria-label="Admin">
+        <a href="#home"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2.5 7.2 8 2.8l5.5 4.4V13a1 1 0 0 1-1 1h-3.2V9.6H6.7V14H3.5a1 1 0 0 1-1-1V7.2Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>Home</a>
+        <a href="#users"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.2" r="2.2" stroke="currentColor" stroke-width="1.2"/><path d="M3.2 13.2c.7-2.2 2.4-3.3 4.8-3.3s4.1 1.1 4.8 3.3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Users</a>
+        <a href="#reports"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 13V8.5M8 13V3.5M13 13V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Reports</a>
+        <a href="#content"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4.5h10v8.2H3V4.5Z" stroke="currentColor" stroke-width="1.2"/><path d="M3 7h10" stroke="currentColor" stroke-width="1.2"/></svg>Content</a>
+        <a href="#box-ai"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2.2 9.1 6h3.9L10.2 8.4l1.1 3.8L8 10.1 4.7 12.2 5.8 8.4 3 6h3.9L8 2.2Z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>Box AI</a>
+        <a href="#metadata"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.2" stroke="currentColor" stroke-width="1.2"/><path d="M8 2.8v10.4M3.2 8h9.6" stroke="currentColor" stroke-width="1.2"/></svg>Metadata</a>
+        <a href="#classification"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.8 13.2 4v3.6c0 3-2.1 5.2-5.2 6.4C4.9 12.8 2.8 10.6 2.8 7.6V4L8 1.8Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>Classification</a>
+        <a href="#shield"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2.2 12.8 4v3.4c0 2.7-1.8 4.6-4.8 5.8-3-1.2-4.8-3.1-4.8-5.8V4L8 2.2Z" stroke="currentColor" stroke-width="1.2"/></svg>Shield</a>
+        <a class="active" href="#governance" aria-current="page"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 2.8h5.2L12.2 6v7.2H4V2.8Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M9 2.8V6h3.2" stroke="currentColor" stroke-width="1.2"/></svg>Governance</a>
+        <a href="#compliance"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.2" stroke="currentColor" stroke-width="1.2"/><path d="M5.4 8.2 7.2 10l3.4-3.6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Compliance</a>
+        <a href="#relay"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h7M8 4.5 11.5 8 8 11.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Relay</a>
+        <a href="#platform"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 5.5 8 3l5 2.5v5L8 13l-5-2.5v-5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>Platform</a>
+        <a href="#integrations"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2.2" y="2.2" width="4.6" height="4.6" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9.2" y="2.2" width="4.6" height="4.6" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="2.2" y="9.2" width="4.6" height="4.6" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9.2" y="9.2" width="4.6" height="4.6" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>Integrations</a>
+        <a href="#billing"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2.2" y="3.5" width="11.6" height="9" rx="1.2" stroke="currentColor" stroke-width="1.2"/><path d="M2.2 6.5h11.6" stroke="currentColor" stroke-width="1.2"/></svg>Account &amp; Billing</a>
+        <a href="#settings"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.2"/><path d="M8 2.4v1.6M8 12v1.6M2.4 8h1.6M12 8h1.6M4 4l1.1 1.1M10.9 10.9 12 12M12 4l-1.1 1.1M5.1 10.9 4 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Enterprise Settings</a>
+      </nav>
+      <div class="sidebar-foot">
+        <a href="#dev"><span aria-hidden="true">&lt;/&gt;</span> Dev Console</a>
+        <a href="#account"><span aria-hidden="true">←</span> Back to My Account</a>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <label class="search">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.3"/><path d="M10.4 10.4 13.2 13.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <input type="search" placeholder="Search" aria-label="Search" />
+        </label>
+        <div class="top-icons">
+          <button type="button" aria-label="Help">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M6.3 6.2a1.7 1.7 0 1 1 2.3 1.6c-.5.3-.8.7-.8 1.2V9.4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="8" cy="11.3" r="0.6" fill="currentColor"/></svg>
+          </button>
+          <button type="button" aria-label="Content">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M3 4.2h4.2L8.4 6H13v6.2H3V4.2Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M4 10.5V7.2a4 4 0 0 1 8 0v3.3l.8 1.3H3.2L4 10.5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M6.6 12.6a1.4 1.4 0 0 0 2.8 0" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </button>
+          <span class="avatar" role="img" aria-label="Account"></span>
+        </div>
+      </header>
+
+      <div class="page-head">
+        <h1 class="crumb"><span>Governance</span> &gt; New Record Type</h1>
+        <div class="page-actions">
+          <button class="btn" type="button">Cancel</button>
+          <button class="btn btn-save" type="button">Save</button>
+        </div>
+      </div>
+
+      <div class="body">
+        <nav class="steps" aria-label="Record type sections">
+          <a class="active" href="#details">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 7.2V11M8 5.2v.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            Details
+          </a>
+          <a href="#controls">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 5h10M3 11h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="6" cy="5" r="1.5" fill="#fff" stroke="currentColor" stroke-width="1.2"/><circle cx="10" cy="11" r="1.5" fill="#fff" stroke="currentColor" stroke-width="1.2"/></svg>
+            Controls
+          </a>
+          <a href="#retention">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 2.8h5.2L12.2 6v7.2H4V2.8Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M9 2.8V6h3.2M6 9h4M6 11h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            Retention
+          </a>
+          <a href="#access">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="6" cy="6" r="2" stroke="currentColor" stroke-width="1.2"/><circle cx="11" cy="6.5" r="1.6" stroke="currentColor" stroke-width="1.2"/><path d="M2.8 12.4c.5-1.8 1.8-2.7 3.2-2.7s2.7.9 3.2 2.7M10 9.8c.8.1 1.6.6 2.1 1.6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            Permissions
+          </a>
+        </nav>
+
+        <div class="cards">
+          <section class="card" id="details">
+            <h2>Details</h2>
+            <p class="lede">Choose an existing record group or create one, then name your record type (Ex: Budget Record).</p>
+            <div class="field">
+              <label for="group-name"><span class="req">*</span>Group Name</label>
+              <input id="group-name" type="text" placeholder="e.g., Operations" />
+            </div>
+            <div class="field">
+              <label for="record-type-name"><span class="req">*</span>Record Type Name</label>
+              <input id="record-type-name" type="text" placeholder="e.g., Budget Record" />
+            </div>
+            <div class="field">
+              <label for="record-code"><span class="req">*</span>Record Code</label>
+              <input id="record-code" type="text" placeholder="e.g., FIN-001" />
+              <p class="hint">This will be auto-suggested based on record name</p>
+            </div>
+            <div class="field">
+              <label for="description">Description</label>
+              <input id="description" type="text" placeholder="Brief description of the record type" />
+            </div>
+          </section>
+
+          <section class="card" id="controls">
+            <h2>Controls</h2>
+            <p class="lede">Choose how declared records of this type are protected in Box.</p>
+            <label class="switch">
+              <input type="checkbox" />
+              <span class="track"></span>
+              <span class="switch-copy">
+                <strong>Prevent Trashing</strong>
+                <small>Records cannot be moved to trash</small>
+              </span>
+            </label>
+            <label class="switch">
+              <input type="checkbox" />
+              <span class="track"></span>
+              <span class="switch-copy">
+                <strong>Prevent Editing</strong>
+                <small>Records cannot be modified after declaration</small>
+              </span>
+            </label>
+          </section>
+
+          <section class="card" id="retention">
+            <h2>Retention</h2>
+            <p class="lede">Link an existing retention policy from the catalog to this Record type.</p>
+            <label class="radio-row">
+              <input type="radio" name="retention" value="none" checked />
+              <span>No retention policy</span>
+            </label>
+            <label class="radio-row">
+              <input type="radio" name="retention" value="existing" />
+              <span>Link existing retention policy</span>
+            </label>
+            <label class="radio-row">
+              <input type="radio" name="retention" value="create" />
+              <span>Create new policy</span>
+            </label>
+
+            <div class="create-policy" id="create-policy" hidden>
+              <div class="policy-row">
+                <div class="policy-copy">
+                  <h3>Retention Policy Name and Description</h3>
+                  <p>Specify a unique and descriptive name for this retention policy.</p>
+                </div>
+                <div class="policy-fields">
+                  <div class="field">
+                    <label for="policy-name">Policy Name</label>
+                    <input id="policy-name" type="text" placeholder="Enter retention policy name" />
+                  </div>
+                  <div class="field">
+                    <label for="policy-description">Policy Description (optional)</label>
+                    <textarea id="policy-description" placeholder="Enter policy description"></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="policy-row">
+                <div class="policy-copy">
+                  <h3>Time Period</h3>
+                  <p>Specify the amount of time the content should be retained.</p>
+                </div>
+                <div class="policy-fields">
+                  <div class="field">
+                    <label for="time-period">Time Period Duration</label>
+                    <select class="duration" id="time-period">
+                      <option>7 Days</option>
+                      <option selected>30 Days</option>
+                      <option>60 Days</option>
+                      <option>90 Days</option>
+                      <option>180 Days</option>
+                      <option>1 Year</option>
+                      <option>3 Years</option>
+                      <option>5 Years</option>
+                      <option>7 Years</option>
+                      <option>10 Years</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="policy-row">
+                <div class="policy-copy">
+                  <h3>Start date</h3>
+                  <p>Choose the date used as the start of the retention time period.</p>
+                </div>
+                <div class="policy-fields">
+                  <label class="radio-row">
+                    <input type="radio" name="start-date" value="upload" checked />
+                    <span>Box upload/creation date</span>
+                  </label>
+                  <label class="radio-row">
+                    <input type="radio" name="start-date" value="declaration" />
+                    <span>Record Declaration date</span>
+                  </label>
+                  <label class="radio-row">
+                    <input type="radio" name="start-date" value="specific" />
+                    <span>Specific start date</span>
+                  </label>
+                  <div class="specific-date" id="specific-date" hidden>
+                    <button type="button" class="btn" id="open-metadata">Select Date</button>
+                    <span class="selected-attr" id="selected-attr" hidden></span>
+                  </div>
+                </div>
+              </div>
+              <div class="policy-row">
+                <div class="policy-copy">
+                  <h3>Disposition Action</h3>
+                  <p>Specify the disposition action that should take place after the content has been retained for the specified time period.</p>
+                </div>
+                <div class="policy-fields">
+                  <h4>Select Disposition Action</h4>
+                  <div class="radio-line">
+                    <label class="radio-row">
+                      <input type="radio" name="disposition" value="none" />
+                      <span>None</span>
+                    </label>
+                    <button type="button" class="info" aria-label="More information about None">i</button>
+                  </div>
+                  <div class="radio-line">
+                    <label class="radio-row">
+                      <input type="radio" name="disposition" value="delete" checked />
+                      <span>Permanently delete content</span>
+                    </label>
+                    <button type="button" class="info" aria-label="More information about permanently deleting content">i</button>
+                  </div>
+                  <div class="nested" id="disposition-extra">
+                    <label class="check-row">
+                      <input type="checkbox" id="allow-extend" />
+                      <span>Allow folder owners and co-owners to extend deletion date</span>
+                    </label>
+                    <div class="extend-length">
+                      <label for="extension-length">Maximum allowed disposition extension length</label>
+                      <select class="duration" id="extension-length" disabled>
+                        <option selected>Unlimited</option>
+                        <option>30 Days</option>
+                        <option>90 Days</option>
+                        <option>1 Year</option>
+                        <option>3 Years</option>
+                        <option>5 Years</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="policy-row">
+                <div class="policy-copy">
+                  <h3>Notification</h3>
+                  <p>Select managed users who will receive a weekly disposition email notification. This email will remind them about files with retention periods scheduled to expire within the next 14 days.</p>
+                </div>
+                <div class="policy-fields">
+                  <h4>Select Users To Receive Notifications</h4>
+                  <label class="check-row">
+                    <input type="checkbox" id="notify-owners" />
+                    <span>Folder owners and co-owners</span>
+                  </label>
+                  <label class="check-row">
+                    <input type="checkbox" id="notify-specified" />
+                    <span>Specified users</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card" id="access">
+            <h2>Permissions</h2>
+            <p class="lede">Choose to enable for all managed users in your account or select users you choose</p>
+            <label class="radio-row">
+              <input type="radio" name="access" value="all" checked />
+              <span>Enable for all managed users</span>
+            </label>
+            <label class="radio-row">
+              <input type="radio" name="access" value="select" />
+              <span>Enable for select users and groups</span>
+            </label>
+            <label class="radio-row">
+              <input type="radio" name="access" value="except" />
+              <span>Enable for everyone except select users and groups</span>
+            </label>
+            <label class="radio-row">
+              <input type="radio" name="access" value="none" />
+              <span>Disable for all managed users</span>
+            </label>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="metadata-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="metadata-title">
+      <div class="modal-head">
+        <h2 id="metadata-title">Select Metadata <button type="button" class="info" aria-label="More information about metadata">i</button></h2>
+        <button type="button" class="modal-close" id="meta-close" aria-label="Close">×</button>
+      </div>
+      <div class="modal-toolbar">
+        <label class="filter">
+          <input id="metadata-filter" type="search" placeholder="Filter Metadata Templates or Dropdown Options" />
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.3"/><path d="M10.4 10.4 13.2 13.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </label>
+        <a class="meta-help" href="#" id="meta-help">How to create and manage metadata</a>
+      </div>
+      <div class="meta-list" id="meta-list">
+        <label class="meta-row" data-label="accounting, finance &amp; tax">
+          <span>Accounting, Finance &amp; Tax</span>
+          <input type="radio" name="metadata-attr" value="Accounting, Finance &amp; Tax" />
+        </label>
+        <label class="meta-row" data-label="ai archive assessment">
+          <span>AI Archive Assessment</span>
+          <input type="radio" name="metadata-attr" value="AI Archive Assessment" />
+        </label>
+        <div class="meta-group" data-label="archive suggestion">
+          <button type="button" class="meta-toggle" aria-expanded="false">
+            <svg class="chevron" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M3 1.5 7 5 3 8.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Archive Suggestion (2)
+          </button>
+          <div class="meta-children" hidden>
+            <label class="meta-row" data-label="suggestion date archive suggestion">
+              <span>Suggestion Date</span>
+              <input type="radio" name="metadata-attr" value="Archive Suggestion · Suggestion Date" />
+            </label>
+            <label class="meta-row" data-label="suggestion notes archive suggestion">
+              <span>Suggestion Notes</span>
+              <input type="radio" name="metadata-attr" value="Archive Suggestion · Suggestion Notes" />
+            </label>
+          </div>
+        </div>
+        <div class="meta-group" data-label="archive approval">
+          <button type="button" class="meta-toggle" aria-expanded="false">
+            <svg class="chevron" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M3 1.5 7 5 3 8.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Archive Approval (2)
+          </button>
+          <div class="meta-children" hidden>
+            <label class="meta-row" data-label="approval date archive approval">
+              <span>Approval Date</span>
+              <input type="radio" name="metadata-attr" value="Archive Approval · Approval Date" />
+            </label>
+            <label class="meta-row" data-label="approval status archive approval">
+              <span>Approval Status</span>
+              <input type="radio" name="metadata-attr" value="Archive Approval · Approval Status" />
+            </label>
+          </div>
+        </div>
+        <label class="meta-row" data-label="ai classification results">
+          <span>AI Classification Results</span>
+          <input type="radio" name="metadata-attr" value="AI Classification Results" />
+        </label>
+      </div>
+      <div class="modal-foot">
+        <span id="meta-count">0 Selected</span>
+        <div class="page-actions">
+          <button type="button" class="btn" id="meta-cancel">Cancel</button>
+          <button type="button" class="btn btn-save" id="meta-select" disabled>Select</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("create-policy");
+    const radios = document.querySelectorAll('input[name="retention"]');
+
+    function syncRetention(shouldFocus) {
+      const create = document.querySelector('input[name="retention"][value="create"]').checked;
+      form.classList.toggle("is-open", create);
+      form.hidden = !create;
+      if (create && shouldFocus) {
+        document.getElementById("policy-name").focus();
+      }
+    }
+
+    radios.forEach((radio) => {
+      radio.addEventListener("change", () => syncRetention(true));
+    });
+
+    const dispositionExtra = document.getElementById("disposition-extra");
+    const allowExtend = document.getElementById("allow-extend");
+    const extensionLength = document.getElementById("extension-length");
+
+    function syncDisposition() {
+      const permanent = document.querySelector('input[name="disposition"][value="delete"]').checked;
+      dispositionExtra.hidden = !permanent;
+      extensionLength.disabled = !allowExtend.checked;
+    }
+
+    document.querySelectorAll('input[name="disposition"]').forEach((radio) => {
+      radio.addEventListener("change", syncDisposition);
+    });
+    allowExtend.addEventListener("change", syncDisposition);
+
+    const specificDate = document.getElementById("specific-date");
+    const metadataModal = document.getElementById("metadata-modal");
+    const metadataFilter = document.getElementById("metadata-filter");
+    const metaCount = document.getElementById("meta-count");
+    const metaSelect = document.getElementById("meta-select");
+    const selectedAttr = document.getElementById("selected-attr");
+    let appliedAttribute = "";
+
+    function syncStartDate() {
+      const specific = document.querySelector('input[name="start-date"][value="specific"]').checked;
+      specificDate.hidden = !specific;
+    }
+
+    document.querySelectorAll('input[name="start-date"]').forEach((radio) => {
+      radio.addEventListener("change", syncStartDate);
+    });
+
+    function checkedAttribute() {
+      return document.querySelector('input[name="metadata-attr"]:checked');
+    }
+
+    function syncMetaCount() {
+      const selected = Boolean(checkedAttribute());
+      metaCount.textContent = selected ? "1 Selected" : "0 Selected";
+      metaSelect.disabled = !selected;
+    }
+
+    function applyMetadataFilter() {
+      const query = metadataFilter.value.trim().toLowerCase();
+      document.querySelectorAll("#meta-list > .meta-row").forEach((row) => {
+        row.hidden = Boolean(query) && !row.dataset.label.includes(query);
+      });
+      document.querySelectorAll("#meta-list > .meta-group").forEach((group) => {
+        const parentMatch = group.dataset.label.includes(query);
+        let anyChild = false;
+        group.querySelectorAll(".meta-row").forEach((row) => {
+          const match = !query || parentMatch || row.dataset.label.includes(query);
+          row.hidden = !match;
+          if (match) anyChild = true;
+        });
+        group.hidden = Boolean(query) && !parentMatch && !anyChild;
+        if (query && anyChild && !parentMatch) {
+          const toggle = group.querySelector(".meta-toggle");
+          toggle.setAttribute("aria-expanded", "true");
+          group.querySelector(".meta-children").hidden = false;
+        }
+      });
+    }
+
+    function openMetadataModal() {
+      document.querySelectorAll('input[name="metadata-attr"]').forEach((radio) => {
+        radio.checked = radio.value === appliedAttribute;
+      });
+      metadataFilter.value = "";
+      applyMetadataFilter();
+      syncMetaCount();
+      metadataModal.hidden = false;
+      metadataFilter.focus();
+    }
+
+    function closeMetadataModal() {
+      metadataModal.hidden = true;
+    }
+
+    document.getElementById("open-metadata").addEventListener("click", openMetadataModal);
+    document.getElementById("meta-close").addEventListener("click", closeMetadataModal);
+    document.getElementById("meta-cancel").addEventListener("click", closeMetadataModal);
+    document.getElementById("meta-help").addEventListener("click", (event) => event.preventDefault());
+    metadataModal.addEventListener("click", (event) => {
+      if (event.target === metadataModal) closeMetadataModal();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !metadataModal.hidden) closeMetadataModal();
+    });
+    metadataFilter.addEventListener("input", applyMetadataFilter);
+    document.querySelectorAll('input[name="metadata-attr"]').forEach((radio) => {
+      radio.addEventListener("change", syncMetaCount);
+    });
+    document.querySelectorAll(".meta-toggle").forEach((toggle) => {
+      toggle.addEventListener("click", () => {
+        const open = toggle.getAttribute("aria-expanded") === "true";
+        toggle.setAttribute("aria-expanded", String(!open));
+        toggle.nextElementSibling.hidden = open;
+      });
+    });
+    metaSelect.addEventListener("click", () => {
+      const selected = checkedAttribute();
+      if (!selected) return;
+      appliedAttribute = selected.value;
+      selectedAttr.hidden = false;
+      selectedAttr.textContent = appliedAttribute;
+      closeMetadataModal();
+    });
+
+    const stepLinks = document.querySelectorAll(".steps a");
+    const sections = ["details", "controls", "retention", "access"].map((id) => document.getElementById(id));
+
+    stepLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        stepLinks.forEach((item) => item.classList.remove("active"));
+        link.classList.add("active");
+      });
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (!visible) return;
+      stepLinks.forEach((link) => {
+        link.classList.toggle("active", link.getAttribute("href") === "#" + visible.target.id);
+      });
+    }, { rootMargin: "-20% 0px -55% 0px", threshold: [0.2, 0.5] });
+
+    sections.forEach((section) => observer.observe(section));
+  </script>
+</body>
+</html>
