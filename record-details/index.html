@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Q3_2026_Board_Presentation_AcmeFin.Keynote</title>
+  <style>
+    :root {
+      --ink: #222;
+      --muted: #6f6f6f;
+      --line: #e6e6e6;
+      --blue: #0061d5;
+      --canvas: #f4f5f7;
+      --panel: #fff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      color: var(--ink);
+      background: #fff;
+      font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    button, input { font-family: inherit; font-size: 14px; }
+
+    .app {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      min-width: 1100px;
+    }
+
+    .topbar {
+      height: 64px;
+      flex: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 16px 0 8px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border: 0;
+      background: transparent;
+      border-radius: 6px;
+      color: #444;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+    }
+
+    .icon-btn:hover { background: #f3f3f3; }
+
+    .file-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: #1d4f91;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      flex: none;
+    }
+
+    .file-id { min-width: 0; }
+
+    .file-name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .file-name span.name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .pill {
+      height: 18px;
+      padding: 0 6px;
+      border-radius: 9px;
+      background: #efefef;
+      color: #555;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      letter-spacing: 0.2px;
+    }
+
+    .pill.record {
+      background: #e8f1fb;
+      color: #0b4f9c;
+      gap: 4px;
+    }
+
+    .file-sub {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .top-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .presence {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #444;
+      margin-right: 6px;
+    }
+
+    .faces { display: flex; }
+    .faces span {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      margin-left: -6px;
+    }
+    .faces span:first-child { margin-left: 0; background: #7b61c9; }
+    .faces span:last-child { background: #c48a62; }
+
+    .btn {
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 6px;
+      border: 1px solid #d5d5d5;
+      background: #fff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #222;
+    }
+
+    .btn:hover { background: #f7f7f7; }
+
+    .btn-ai { color: #3b2f8f; }
+
+    .open-group { display: flex; }
+    .open-group .btn { border-radius: 6px 0 0 6px; }
+    .open-caret {
+      width: 28px;
+      border: 1px solid #d5d5d5;
+      border-left: 0;
+      border-radius: 0 6px 6px 0;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .btn-share {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+      border-radius: 16px;
+      padding: 0 14px;
+      font-weight: 650;
+    }
+
+    .btn-share:hover { background: #0054b8; }
+
+    .stage {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 168px minmax(0, 1fr) 48px 320px;
+      background: var(--canvas);
+    }
+
+    .thumbs {
+      overflow: auto;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .thumb {
+      height: 78px;
+      border-radius: 4px;
+      border: 2px solid transparent;
+      background: #fff;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .thumb.active { border-color: var(--blue); }
+
+    .thumb .mini {
+      height: 100%;
+      background:
+        linear-gradient(115deg, #0d1b36 0 58%, #24124d 58% 100%);
+    }
+
+    .thumb.doc {
+      background:
+        linear-gradient(#fff, #fff) padding-box,
+        repeating-linear-gradient(#e9e9e9, #e9e9e9 6px, #fff 6px, #fff 12px);
+    }
+
+    .thumb.blue {
+      background: linear-gradient(160deg, #123a73, #071428);
+    }
+
+    .canvas {
+      display: grid;
+      place-items: center;
+      padding: 28px 24px;
+      min-width: 0;
+    }
+
+    .slide {
+      width: min(860px, 100%);
+      aspect-ratio: 16 / 9;
+      border-radius: 2px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      background: #07111f;
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+      position: relative;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(90deg, #000 0 62%, transparent 78%);
+      pointer-events: none;
+    }
+
+    .slide-copy, .slide-viz { position: relative; z-index: 1; }
+
+    .slide-copy { padding: 28px 24px 18px 32px; display: flex; flex-direction: column; }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      letter-spacing: 1.4px;
+      color: #c9d4ea;
+    }
+
+    .hex {
+      width: 18px;
+      height: 18px;
+      background: #4d7cff;
+      clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    }
+
+    .kicker {
+      margin-top: 28px;
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: #9eb0d0;
+    }
+
+    .slide h1 {
+      margin: 10px 0 0;
+      font-size: 46px;
+      line-height: 0.95;
+      font-weight: 750;
+      letter-spacing: -1px;
+    }
+
+    .slide h1 em {
+      display: block;
+      font-style: normal;
+      color: #7b6cff;
+    }
+
+    .deck {
+      margin: 14px 0 0;
+      max-width: 280px;
+      color: #c5d0e4;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .metrics {
+      margin-top: auto;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      padding-top: 16px;
+    }
+
+    .metrics strong { display: block; font-size: 16px; }
+    .metrics span { color: #8ea0bf; font-size: 10px; }
+    .up { color: #3ddc97; font-size: 10px; }
+
+    .slide-viz {
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 50% 55%, rgba(90, 70, 255, 0.45), transparent 42%),
+        linear-gradient(180deg, #12082a, #1a0d3d 70%, #090616);
+    }
+
+    .radar { width: 78%; height: auto; }
+
+    .rail {
+      border-left: 1px solid #e3e3e3;
+      background: #fafafa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 0;
+      gap: 4px;
+    }
+
+    .rail button {
+      width: 36px;
+      height: 36px;
+      border: 0;
+      background: transparent;
+      border-radius: 8px;
+      color: #555;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .rail button:hover { background: #eee; }
+
+    .rail button.active {
+      color: var(--blue);
+      background: #e8f1fb;
+    }
+
+    .rail button.active::before {
+      content: "";
+      position: absolute;
+      left: -6px;
+      top: 8px;
+      bottom: 8px;
+      width: 3px;
+      border-radius: 2px;
+      background: var(--blue);
+    }
+
+    .details {
+      background: var(--panel);
+      border-left: 1px solid var(--line);
+      overflow: auto;
+      padding: 18px 18px 28px;
+    }
+
+    .details h2 {
+      margin: 0 0 16px;
+      font-size: 20px;
+      font-weight: 650;
+    }
+
+    .section { border-top: 1px solid #ececec; }
+
+    .section-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0 8px;
+      border: 0;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 650;
+      cursor: pointer;
+      color: #222;
+    }
+
+    .section-toggle .chevron {
+      transition: transform 0.15s ease;
+      color: #666;
+    }
+
+    .section-toggle[aria-expanded="false"] .chevron { transform: rotate(-90deg); }
+
+    .section-body { padding-bottom: 8px; }
+    .section-body[hidden] { display: none; }
+
+    .meta { margin: 0 0 14px; }
+    .meta .label {
+      color: var(--muted);
+      font-size: 12.5px;
+      margin-bottom: 3px;
+    }
+    .meta .value {
+      color: #222;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .date-input {
+      width: 100%;
+      height: 36px;
+      margin-top: 6px;
+      border: 1px solid #cfcfcf;
+      border-radius: 6px;
+      padding: 0 10px;
+      color: #222;
+      background: #fff;
+    }
+
+    .date-input:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 1px var(--blue);
+    }
+
+    .prop-desc {
+      color: #8a8a8a;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <button class="icon-btn" type="button" aria-label="Back">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M10 3.5 5.5 8 10 12.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="file-mark" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 2.5h6.2L13 6.2V13.5H3V2.5Z" stroke="#fff" stroke-width="1.2"/><path d="M9 2.6V6.2H13" stroke="#fff" stroke-width="1.2"/></svg>
+      </div>
+      <div class="file-id">
+        <div class="file-name">
+          <span class="name">Q3_2026_Board_Presentation_AcmeFin.Keynote</span>
+          <span class="pill">V3</span>
+          <span class="pill record">
+            <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="8" r="2" fill="currentColor"/></svg>
+            RECORD
+          </span>
+        </div>
+        <div class="file-sub">Parent Folder Name · Updated today by Jordan Ellis</div>
+      </div>
+      <div class="top-actions">
+        <div class="presence">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 12.5V4.2M8 12.5V6.5M13 12.5V3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <span>1217</span>
+          <div class="faces" aria-hidden="true"><span>M</span><span></span></div>
+        </div>
+        <button class="icon-btn" type="button" aria-label="More">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><circle cx="3.5" cy="8" r="1.2"/><circle cx="8" cy="8" r="1.2"/><circle cx="12.5" cy="8" r="1.2"/></svg>
+        </button>
+        <button class="icon-btn" type="button" aria-label="Download">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2.5v7M5.2 7.2 8 10l2.8-2.8M3.5 13h9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="btn btn-ai" type="button">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.8 9.2 6h4.2L10.4 8.6l1.2 4.2L8 10.4 4.4 12.8 5.6 8.6 2.6 6h4.2L8 1.8Z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
+          Box AI
+        </button>
+        <div class="open-group">
+          <button class="btn" type="button">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2.5" y="3" width="11" height="10" rx="1.2" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 6h11" stroke="currentColor" stroke-width="1.2"/></svg>
+            Open
+          </button>
+          <button class="open-caret" type="button" aria-label="Open options">
+            <svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="#444" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <button class="btn btn-share" type="button">
+          Share
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h8M8 4.5 11.5 8 8 11.5" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="stage">
+      <aside class="thumbs" aria-label="Slides">
+        <button class="thumb active" type="button" aria-label="Slide 1" aria-current="true"><div class="mini"></div></button>
+        <button class="thumb doc" type="button" aria-label="Slide 2"></button>
+        <button class="thumb doc" type="button" aria-label="Slide 3"></button>
+        <button class="thumb doc" type="button" aria-label="Slide 4"></button>
+        <button class="thumb doc" type="button" aria-label="Slide 5"></button>
+        <button class="thumb blue" type="button" aria-label="Slide 6"></button>
+        <button class="thumb doc" type="button" aria-label="Slide 7"></button>
+        <button class="thumb doc" type="button" aria-label="Slide 8"></button>
+      </aside>
+
+      <main class="canvas">
+        <article class="slide" aria-label="Strategic Performance Review">
+          <div class="slide-copy">
+            <div class="brand"><span class="hex"></span> ACME CO. <span style="opacity:.55">CONFIDENTIAL</span></div>
+            <div class="kicker">20 2026 · YEARS OF IMPACT</div>
+            <h1>Strategic<em>Performance</em>Review</h1>
+            <p class="deck">Forward outlook, growth metrics, and strategic priorities for the quarter ending September 30, 2026.</p>
+            <div class="metrics">
+              <div><strong>$284.6M</strong><span>Revenue</span></div>
+              <div><strong>118%</strong><span class="up">▲ vs plan</span></div>
+              <div><strong>1,240</strong><span>Customers</span></div>
+              <div><strong>76.4%</strong><span class="up">▲ margin</span></div>
+            </div>
+          </div>
+          <div class="slide-viz">
+            <svg class="radar" viewBox="0 0 260 260" aria-hidden="true">
+              <g fill="none" stroke="rgba(170,190,255,.35)" stroke-width="1">
+                <circle cx="130" cy="132" r="28"/>
+                <circle cx="130" cy="132" r="52"/>
+                <circle cx="130" cy="132" r="76"/>
+                <circle cx="130" cy="132" r="100"/>
+                <path d="M130 32v200M30 132h200M59 61l142 142M201 61 59 203"/>
+              </g>
+              <circle cx="130" cy="132" r="8" fill="#7aa2ff"/>
+              <circle cx="130" cy="132" r="3" fill="#fff"/>
+              <circle cx="188" cy="78" r="4" fill="#3ddc97"/>
+              <text x="196" y="74" fill="#3ddc97" font-size="11">AST +42%</text>
+              <circle cx="78" cy="168" r="4" fill="#ff5d73"/>
+              <text x="40" y="186" fill="#ff8aa0" font-size="11">CAC -18%</text>
+              <circle cx="176" cy="176" r="4" fill="#3ddc97"/>
+              <text x="184" y="192" fill="#3ddc97" font-size="11">NPS +118%</text>
+            </svg>
+          </div>
+        </article>
+      </main>
+
+      <nav class="rail" aria-label="Sidebar">
+        <button type="button" aria-label="Box AI">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.8 9.2 6h4.2L10.4 8.6l1.2 4.2L8 10.4 4.4 12.8 5.6 8.6 2.6 6h4.2L8 1.8Z" stroke="currentColor" stroke-width="1.1"/></svg>
+        </button>
+        <button type="button" aria-label="Comments">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3.5h10v7.2H6.2L3 13V3.5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="active" type="button" aria-label="Details" aria-current="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 7.2V11M8 5.1v.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </button>
+        <button type="button" aria-label="Activity">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 4.5V8l2.4 1.6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </button>
+        <button type="button" aria-label="Tasks">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 3.5h8v9H4v-9Z" stroke="currentColor" stroke-width="1.2"/><path d="M6 7.2 7.2 8.4 10 5.8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </button>
+        <button type="button" aria-label="Add">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3.5v9M3.5 8h9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </button>
+      </nav>
+
+      <aside class="details">
+        <h2>Details</h2>
+
+        <section class="section">
+          <button class="section-toggle" type="button" aria-expanded="true" aria-controls="record-details">
+            Record Details
+            <svg class="chevron" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </button>
+          <div class="section-body" id="record-details">
+            <div class="meta">
+              <div class="label">Description</div>
+              <div class="value">Official board presentation decks subject to SEC retention rules.</div>
+            </div>
+            <div class="meta">
+              <div class="label">Record Group</div>
+              <div class="value">Executive Records</div>
+            </div>
+            <div class="meta">
+              <div class="label">Record Type</div>
+              <div class="value">Board Meeting Presentations</div>
+            </div>
+            <div class="meta">
+              <div class="label">Retention Policy</div>
+              <div class="value">SEC Financial Retention</div>
+            </div>
+            <div class="meta">
+              <div class="label">Retention length</div>
+              <div class="value">7 Years</div>
+            </div>
+            <div class="meta">
+              <div class="label">Controls</div>
+              <div class="value">Prevent Trashing<br>Prevent Editing<br>Enhanced Audit Logging</div>
+            </div>
+            <div class="meta">
+              <label class="label" for="fy-end">Financial Year End Date</label>
+              <input class="date-input" id="fy-end" type="date" />
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <button class="section-toggle" type="button" aria-expanded="true" aria-controls="file-properties">
+            File Properties
+            <svg class="chevron" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </button>
+          <div class="section-body" id="file-properties">
+            <div class="meta">
+              <div class="label">Description</div>
+              <div class="value prop-desc">Enter a description</div>
+            </div>
+            <div class="meta">
+              <div class="label">Owner</div>
+              <div class="value">IT at Box</div>
+            </div>
+            <div class="meta">
+              <div class="label">Uploader</div>
+              <div class="value">Ghada Saber</div>
+            </div>
+            <div class="meta">
+              <div class="label">Created</div>
+              <div class="value">May 14, 2026, 3:26 PM</div>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll(".section-toggle").forEach((button) => {
+      button.addEventListener("click", () => {
+        const open = button.getAttribute("aria-expanded") === "true";
+        button.setAttribute("aria-expanded", String(!open));
+        document.getElementById(button.getAttribute("aria-controls")).hidden = open;
+      });
+    });
+
+    document.querySelectorAll(".thumb").forEach((thumb) => {
+      thumb.addEventListener("click", () => {
+        document.querySelectorAll(".thumb").forEach((item) => {
+          item.classList.remove("active");
+          item.removeAttribute("aria-current");
+        });
+        thumb.classList.add("active");
+        thumb.setAttribute("aria-current", "true");
+      });
+    });
+  </script>
+</body>
+</html>
