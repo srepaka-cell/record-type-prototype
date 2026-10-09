@@ -553,23 +553,68 @@
     }
 
     .specific-date {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 2px 0 4px 26px;
+      display: block;
+      margin: 10px 0 4px 26px;
+      max-width: 560px;
     }
 
     .specific-date[hidden],
     .selected-attr[hidden],
+    .date-field-editor[hidden],
+    .date-field-saved[hidden],
+    .field-error[hidden],
+    .modal-context[hidden],
     .meta-children[hidden],
     .meta-row[hidden],
     .meta-group[hidden] {
       display: none;
     }
 
+    .date-field-editor > label {
+      display: block;
+      font-size: 13.5px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .date-field-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .date-field-row input { flex: 1; }
+
+    .field-error {
+      margin: 6px 0 0;
+      color: var(--danger);
+      font-size: 12px;
+    }
+
+    .saved-name {
+      margin: 0 0 4px;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .date-field-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
     .selected-attr {
+      margin: 10px 0 0;
       color: #222;
       font-size: 13.5px;
+    }
+
+    .modal-context {
+      margin: 0;
+      padding: 0 20px 10px;
+      color: #6b6b6b;
+      font-size: 13px;
+      line-height: 1.45;
     }
 
     .modal-backdrop {
@@ -958,8 +1003,24 @@
                     <span>Specific start date</span>
                   </label>
                   <div class="specific-date" id="specific-date" hidden>
-                    <button type="button" class="btn" id="open-metadata">Select Date</button>
-                    <span class="selected-attr" id="selected-attr" hidden></span>
+                    <div class="date-field-editor" id="date-field-editor">
+                      <label for="date-field-name">Date field name</label>
+                      <div class="date-field-row">
+                        <input id="date-field-name" type="text" placeholder="e.g., Contract effective date" />
+                        <button type="button" class="btn" id="save-date-field">Save</button>
+                      </div>
+                      <p class="hint">Name the date field to add to this record type. Map it to metadata after you save.</p>
+                      <p class="field-error" id="date-field-error" hidden>Enter a name for this date field.</p>
+                    </div>
+                    <div class="date-field-saved" id="date-field-saved" hidden>
+                      <p class="saved-name" id="saved-field-label"></p>
+                      <p class="hint">Added to the record schema. Map a metadata date so this field is filled when that metadata is updated.</p>
+                      <div class="date-field-actions">
+                        <button type="button" class="btn" id="edit-date-field">Edit name</button>
+                        <button type="button" class="btn" id="open-metadata">Map to metadata</button>
+                      </div>
+                      <p class="selected-attr" id="selected-attr" hidden></p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1054,58 +1115,39 @@
         <h2 id="metadata-title">Select Metadata <button type="button" class="info" aria-label="More information about metadata">i</button></h2>
         <button type="button" class="modal-close" id="meta-close" aria-label="Close">×</button>
       </div>
+      <p class="modal-context" id="metadata-context" hidden></p>
       <div class="modal-toolbar">
         <label class="filter">
-          <input id="metadata-filter" type="search" placeholder="Filter Metadata Templates or Dropdown Options" />
+          <input id="metadata-filter" type="search" placeholder="Filter date attributes" />
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.3"/><path d="M10.4 10.4 13.2 13.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
         </label>
         <a class="meta-help" href="#" id="meta-help">How to create and manage metadata</a>
       </div>
       <div class="meta-list" id="meta-list">
-        <label class="meta-row" data-label="accounting, finance &amp; tax">
-          <span>Accounting, Finance &amp; Tax</span>
-          <input type="radio" name="metadata-attr" value="Accounting, Finance &amp; Tax" />
-        </label>
-        <label class="meta-row" data-label="ai archive assessment">
-          <span>AI Archive Assessment</span>
-          <input type="radio" name="metadata-attr" value="AI Archive Assessment" />
-        </label>
         <div class="meta-group" data-label="archive suggestion">
           <button type="button" class="meta-toggle" aria-expanded="false">
             <svg class="chevron" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M3 1.5 7 5 3 8.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Archive Suggestion (2)
+            Archive Suggestion (1)
           </button>
           <div class="meta-children" hidden>
             <label class="meta-row" data-label="suggestion date archive suggestion">
               <span>Suggestion Date</span>
               <input type="radio" name="metadata-attr" value="Archive Suggestion · Suggestion Date" />
             </label>
-            <label class="meta-row" data-label="suggestion notes archive suggestion">
-              <span>Suggestion Notes</span>
-              <input type="radio" name="metadata-attr" value="Archive Suggestion · Suggestion Notes" />
-            </label>
           </div>
         </div>
         <div class="meta-group" data-label="archive approval">
           <button type="button" class="meta-toggle" aria-expanded="false">
             <svg class="chevron" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M3 1.5 7 5 3 8.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Archive Approval (2)
+            Archive Approval (1)
           </button>
           <div class="meta-children" hidden>
             <label class="meta-row" data-label="approval date archive approval">
               <span>Approval Date</span>
               <input type="radio" name="metadata-attr" value="Archive Approval · Approval Date" />
             </label>
-            <label class="meta-row" data-label="approval status archive approval">
-              <span>Approval Status</span>
-              <input type="radio" name="metadata-attr" value="Archive Approval · Approval Status" />
-            </label>
           </div>
         </div>
-        <label class="meta-row" data-label="ai classification results">
-          <span>AI Classification Results</span>
-          <input type="radio" name="metadata-attr" value="AI Classification Results" />
-        </label>
       </div>
       <div class="modal-foot">
         <span id="meta-count">0 Selected</span>
@@ -1152,14 +1194,48 @@
     const specificDate = document.getElementById("specific-date");
     const metadataModal = document.getElementById("metadata-modal");
     const metadataFilter = document.getElementById("metadata-filter");
+    const metadataContext = document.getElementById("metadata-context");
     const metaCount = document.getElementById("meta-count");
     const metaSelect = document.getElementById("meta-select");
     const selectedAttr = document.getElementById("selected-attr");
+    const dateFieldEditor = document.getElementById("date-field-editor");
+    const dateFieldSaved = document.getElementById("date-field-saved");
+    const dateFieldInput = document.getElementById("date-field-name");
+    const dateFieldError = document.getElementById("date-field-error");
+    const savedFieldLabel = document.getElementById("saved-field-label");
+    const mapButton = document.getElementById("open-metadata");
     let appliedAttribute = "";
+    let savedFieldName = "";
 
     function syncStartDate() {
       const specific = document.querySelector('input[name="start-date"][value="specific"]').checked;
       specificDate.hidden = !specific;
+    }
+
+    function renderMapping() {
+      if (!appliedAttribute) {
+        selectedAttr.hidden = true;
+        mapButton.textContent = "Map to metadata";
+        return;
+      }
+      selectedAttr.hidden = false;
+      selectedAttr.textContent = "Mapped to " + appliedAttribute;
+      mapButton.textContent = "Change mapping";
+    }
+
+    function saveDateField() {
+      const name = dateFieldInput.value.trim();
+      if (!name) {
+        dateFieldError.hidden = false;
+        dateFieldInput.focus();
+        return;
+      }
+      dateFieldError.hidden = true;
+      savedFieldName = name;
+      savedFieldLabel.textContent = name;
+      dateFieldEditor.hidden = true;
+      dateFieldSaved.hidden = false;
+      renderMapping();
     }
 
     document.querySelectorAll('input[name="start-date"]').forEach((radio) => {
@@ -1205,6 +1281,8 @@
       metadataFilter.value = "";
       applyMetadataFilter();
       syncMetaCount();
+      metadataContext.hidden = false;
+      metadataContext.textContent = "Choose the metadata date that will populate “" + savedFieldName + "”. This record field receives that date when the metadata is updated.";
       metadataModal.hidden = false;
       metadataFilter.focus();
     }
@@ -1213,7 +1291,23 @@
       metadataModal.hidden = true;
     }
 
-    document.getElementById("open-metadata").addEventListener("click", openMetadataModal);
+    document.getElementById("save-date-field").addEventListener("click", saveDateField);
+    dateFieldInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        saveDateField();
+      }
+    });
+    dateFieldInput.addEventListener("input", () => {
+      if (dateFieldInput.value.trim()) dateFieldError.hidden = true;
+    });
+    document.getElementById("edit-date-field").addEventListener("click", () => {
+      dateFieldInput.value = savedFieldName;
+      dateFieldSaved.hidden = true;
+      dateFieldEditor.hidden = false;
+      dateFieldInput.focus();
+    });
+    mapButton.addEventListener("click", openMetadataModal);
     document.getElementById("meta-close").addEventListener("click", closeMetadataModal);
     document.getElementById("meta-cancel").addEventListener("click", closeMetadataModal);
     document.getElementById("meta-help").addEventListener("click", (event) => event.preventDefault());
@@ -1238,8 +1332,7 @@
       const selected = checkedAttribute();
       if (!selected) return;
       appliedAttribute = selected.value;
-      selectedAttr.hidden = false;
-      selectedAttr.textContent = appliedAttribute;
+      renderMapping();
       closeMetadataModal();
     });
 
